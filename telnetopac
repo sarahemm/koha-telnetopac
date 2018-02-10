@@ -1,0 +1,43 @@
+#!/usr/bin/ruby
+
+SRU_HOST = "127.0.0.1"
+SRU_PORT = "9999"
+
+require "fstui"
+
+require './backend.rb'
+require './search.rb'
+
+screen = FSTui::Screen.new
+backend = TelnetOPAC::Backend.new(SRU_HOST, SRU_PORT)
+
+begin
+  date_string = Time.now.strftime("%d %^b %Y")
+  time_string = Time.now.strftime("%H:%M")
+  screen.titlebar.left = date_string
+  screen.titlebar.right = time_string
+  screen.titlebar.center = "BOOKWORM LIBRARY"
+  screen.redraw
+  
+  loop do
+    main_menu = screen.new_menu("Welcome to the Online Public Access Catalog!")
+    main_menu.add_item :title_kw, "TITLE Keywords"
+    main_menu.add_item :title,    "Exact TITLE"
+    main_menu.add_item :author,   "AUTHOR Browse"
+    main_menu.add_item :subject,  "SUBJECT Keywords"
+    main_menu.add_item :series,   "SERIES"
+    main_menu.add_item :record,   "Review Patron Record"
+    main_menu.add_item :logoff,   "Logoff"
+  
+    case main_menu.get_response  
+      when :title
+        TelnetOPAC::Search::title screen, backend
+      when :logoff
+        screen.destroy
+        Kernel.exit
+    end
+  end
+ensure
+  screen.destroy
+end
+
