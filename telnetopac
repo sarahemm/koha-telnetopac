@@ -25,7 +25,7 @@ begin
     main_menu.add_item :title,    "Exact TITLE"
     main_menu.add_item :author,   "AUTHOR Browse"
     main_menu.add_item :subject,  "SUBJECT Keywords"
-    main_menu.add_item :series,   "SERIES"
+    main_menu.add_item :super,    "SUPER Search"
     main_menu.add_item :record,   "Review Patron Record"
     main_menu.add_item :logoff,   "Logoff"
   
