@@ -42,10 +42,25 @@ module TelnetOPAC
       response = Array.new
       for marc_record in reader
         record = {
+          :biblio_id => marc_record['999']['c'],
           :title => marc_record['245']['a'],
           :subtitle =>  marc_record['245']['b'],
           :author => marc_record['245']['c'],
         }
+        record[:author_dates] = marc_record['100']['d'] if marc_record['100']
+        record[:publication_date] = marc_record['260']['c'] if marc_record['260']
+        record[:publication_date] = marc_record['264']['c'] if marc_record['264'] and !record[:publication_date]
+        if(marc_record['952'])
+          record[:holdings] = Array.new
+          # TODO: support more than one holding for the same bib
+          holding = Hash.new
+          holding[:home_branch] = marc_record['952']['a']
+          holding[:current_branch] = marc_record['952']['b']
+          holding[:location] = marc_record['952']['c']
+          holding[:call_number] = marc_record['952']['o']
+          holding[:checkout_date] = marc_record['952']['q'] if marc_record['952']['q']
+          record[:holdings][0] = holding
+        end
         response.push record
       end
       response

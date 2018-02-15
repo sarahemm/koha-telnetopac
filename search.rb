@@ -8,15 +8,17 @@ module TelnetOPAC
       results = backend.biblio_search search, :title
       waitbox.hide
 
-      results_menu = screen.new_menu("TITLE Search", "Please select one of the results below.")
-      idx = 0
+      result_list = screen.new_infolist("Your Search: #{search}", 2)
+      result_list.left_heading = "AUTHOR/TITLE"
+      result_list.right_heading = "DATE"
       results.each do |result|
-        results_menu.add_item idx, "#{result[:title]} #{result[:subtitle]}"
-        idx += 1
+        author = result[:author]
+        author += ", #{result[:author_dates]}" if result[:author_dates]
+        publication_date = result[:publication_date] ? result[:publication_date].gsub(/[^0-9]/, "") : ""
+        result_list.add_item [[result[:author], publication_date], [result[:title], ""]]
       end
-      results_menu.add_item :mainmenu, "Return to Main Menu"
-
-      results_menu.get_response
+      response = result_list.get_response
+      Display.holdings(screen, results[response][:title], results[response][:holdings])
     end
   end
 end

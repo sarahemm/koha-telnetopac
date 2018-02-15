@@ -7,6 +7,7 @@ require "fstui"
 
 require './backend.rb'
 require './search.rb'
+require './display.rb'
 
 screen = FSTui::Screen.new
 backend = TelnetOPAC::Backend.new(SRU_HOST, SRU_PORT)
